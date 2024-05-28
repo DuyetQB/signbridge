@@ -1,5 +1,5 @@
 "use client";
-import NewsLatterBox from "./NewsLatterBox";
+import SideBox from "./NewsLatterBox";
 import React, { useRef, useEffect, useState } from "react";
 import "@tensorflow/tfjs";
 import * as tmImage from "@teachablemachine/image";
@@ -105,7 +105,7 @@ const Communication = () => {
             </div>
           </div>
           <div className="w-full px-4 lg:w-5/12 xl:w-4/12">
-            <NewsLatterBox ref={labelContainerRef} />
+            <SideBox ref={labelContainerRef} />
           </div>
         </div>
       </div>
