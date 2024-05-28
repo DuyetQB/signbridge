@@ -1,102 +1,74 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
+import '@tensorflow/tfjs';
 import * as tmImage from '@teachablemachine/image';
 
-const WebcamComponent = () => {
-  const [model, setModel] = useState<tmImage.CustomMobileNet | null>(null);
-  const [webcam, setWebcam] = useState<tmImage.Webcam | null>(null);
-  const [maxPredictions, setMaxPredictions] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const webcamRef = useRef<HTMLDivElement>(null);
-  const labelContainerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef(null);
+const URL = './model/';
 
-  const URL = "./model/";
+const WebcamComponent = ({isChecked}:{isChecked:boolean}) => {
+  const webcamRef = useRef(null);
+  const labelContainerRef = useRef(null);
+  let model, webcam, labelContainer, maxPredictions;
 
   useEffect(() => {
-    if (isRunning) {
-      init();
-    } else {
-      if (webcam) {
-        webcam?.stop();
-        setWebcam(null);
-      }
-    }
+    const init = async () => {
+      const modelURL = URL + 'model.json';
+      const metadataURL = URL + 'metadata.json';
 
-    return () => {
-      if (webcam) {
-        webcam?.stop();
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      const flip = true;
+      webcam = new tmImage.Webcam(600, 400, flip);
+      await webcam.setup();
+      await webcam.play();
+
+      webcamRef.current.appendChild(webcam.canvas);
+      labelContainer = labelContainerRef.current;
+
+      window.requestAnimationFrame(loop);
+    };
+
+    const loop = async () => {
+      if (webcam && webcam.canvas) {
+        webcam.update();
+        await predict();
+        window.requestAnimationFrame(loop);
       }
     };
-  }, [isRunning]);
 
-  const init = async () => {
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
-
-    // Load the model and metadata
-    const model = await tmImage.load(modelURL, metadataURL);
-    setModel(model);
-    setMaxPredictions(model.getTotalClasses());
-
-    // Setup a webcam
-    const flip = true; // whether to flip the webcam
-    const webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-    await webcam.setup(); // request access to the webcam
-    await webcam.play();
-    setWebcam(webcam);
-
-    // Append elements to the DOM
-    if (webcamRef.current) {
-      webcamRef.current.innerHTML = ''; // Clear any existing content
-      // webcamRef.current.appendChild(webcam.canvas);
-    }
-    if (labelContainerRef.current) {
-      labelContainerRef.current.innerHTML = ''; // Clear any existing content
-      for (let i = 0; i < model.getTotalClasses(); i++) {
-        labelContainerRef.current.appendChild(document.createElement("div"));
-      }
-    }
-
-    window.requestAnimationFrame(loop);
-  };
-
-  const loop = async () => {
-    if (webcam && isRunning) {
-      webcam.update(); // update the webcam frame
-      await predict();
-      window.requestAnimationFrame(loop);
-    }
-  };
-
-  const predict = async () => {
-    if (model && webcam) {
-      // Run the webcam image through the image model
+    const predict = async () => {
       const prediction = await model.predict(webcam.canvas);
-      if (labelContainerRef.current) {
-        for (let i = 0; i < maxPredictions; i++) {
-          const classPrediction = `${prediction[i].className}: ${prediction[i].probability.toFixed(2)}`;
-          labelContainerRef.current.childNodes[i].textContent = classPrediction;
-        }
+      if (labelContainer) {
+        labelContainer.innerHTML = ''; // Clear previous predictions
+        prediction.forEach(pred => {
+          if (pred.probability.toFixed(2) > 0.6) {
+            const div = document.createElement('div');
+            div.innerText = `${pred.className}: ${pred.probability.toFixed(2)}`;
+            labelContainer.appendChild(div);
+          }
+        });
       }
+    };
+    if(isChecked){
+      init();
     }
-  };
+    
+    return () => {
+      if (webcam && webcam.stop) {
+        webcam.stop();
+      }
+    };
+  }, [isChecked]);
 
   return (
-    <div>
-      <div>Image Model</div>
-      <button type="button" onClick={() => setIsRunning(true)}>
-        Start
-      </button>
-      <button type="button" onClick={() => setIsRunning(false)}>
-        Stop
-      </button>
-      <div id="webcam-container" ref={webcamRef}>
-        <canvas
-            ref={canvasRef} width={400} height={400}
-          />
-      </div>
-      <div id="label-container" ref={labelContainerRef}></div>
-    </div>
+    <>
+      {isChecked && (
+        <div className="py-5">
+          <div id="webcam-container" ref={webcamRef}></div>
+          <div id="label-container" ref={labelContainerRef}></div>
+        </div>
+      )}
+    </>
   );
 };
 

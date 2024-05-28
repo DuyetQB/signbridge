@@ -1,15 +1,15 @@
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import Contact from "@/components/Contact";
+import Donate from "@/components/Donate";
 
 const DonatePage = () => {
   return (
     <>
       <Breadcrumb
         pageName="Donate"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius eros eget sapien consectetur ultrices. Ut quis dapibus libero."
+        description="Nhằm giúp chúng tôi có thêm kinh phí để vận hành cũng như phát triển dự án tốt hơn. Bạn có thể donate cho chúng tôi thông qua tài khoản ngân hàng này"
       />
 
-      <Contact />
+      <Donate />
     </>
   );
 };

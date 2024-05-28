@@ -1,11 +1,13 @@
-const NewsLatterBox = () => {
+import { forwardRef } from "react";
+
+const NewsLatterBox = forwardRef((props, ref:any) => {
   return (
     <div
       className="wow fadeInUp relative z-10 h-[540px] rounded-md bg-primary/[3%] p-8 dark:bg-primary/10 sm:p-11 lg:p-8 xl:p-11"
       data-wow-delay=".2s"
     >
-  
-      <div className="absolute top-0 left-0 z-[-1]">
+      <div id="label-container" className="mt-[100px]" ref={ref} {...props}></div>
+      <div className="absolute left-0 top-0 z-[-1]">
         <svg
           width="370"
           height="596"
@@ -142,6 +144,6 @@ const NewsLatterBox = () => {
       </div>
     </div>
   );
-};
+});
 
 export default NewsLatterBox;
