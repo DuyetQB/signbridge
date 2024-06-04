@@ -8,7 +8,7 @@ const NewsLatterBox = () => {
         QRCode
       </h3>
       <p className="mb-11 border-b border-body-color border-opacity-25 pb-11 text-base font-medium leading-relaxed text-body-color dark:border-white dark:border-opacity-25">
-        Ủng hộ chúng tôi qua mã qrcode này kèm lời nhắn "Ung ho signbridge team".
+        Ủng hộ chúng tôi qua mã qrcode này kèm lời nhắn `Ung ho signbridge team`.
       </p>
       <img
         src="/images/donate/qrcode.png"
