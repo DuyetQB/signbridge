@@ -1,5 +1,7 @@
+import dynamic from "next/dynamic";
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import Communication from "@/components/Communication";
+// import Communication from "@/components/Communication";
+const Communication = dynamic(() => import('@/components/Communication'), { ssr: false });
 
 const CommunicationPage = () => {
   return (

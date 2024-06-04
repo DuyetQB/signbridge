@@ -5,16 +5,16 @@ const NewsLatterBox = () => {
       data-wow-delay=".2s"
     >
       <h3 className="mb-4 text-2xl font-bold leading-tight text-black dark:text-white">
-      QRCode
+        QRCode
       </h3>
-      {/* <p className="mb-11 border-b border-body-color border-opacity-25 pb-11 text-base font-medium leading-relaxed text-body-color dark:border-white dark:border-opacity-25">
-       Nhằm giúp chúng tôi có thêm kinh phí để vận hành cũng như phát triển dự án tốt hơn. Bạn có thể donate cho chúng tôi thông qua tài khoản ngân hàng này.
-      </p> */}
-      {/* <img
-        src="/images/donate/qr-code.JPG"
+      <p className="mb-11 border-b border-body-color border-opacity-25 pb-11 text-base font-medium leading-relaxed text-body-color dark:border-white dark:border-opacity-25">
+        Ủng hộ chúng tôi qua mã qrcode này kèm lời nhắn "Ung ho signbridge team".
+      </p>
+      <img
+        src="/images/donate/qrcode.png"
         alt="shape"
         className="my-6 w-full py-5"
-      /> */}
+      />
       <div className="absolute left-0 top-0 z-[-1]">
         <svg
           width="370"

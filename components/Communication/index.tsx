@@ -11,25 +11,27 @@ const Communication = () => {
 
   const webcamRef = useRef(null);
   const labelContainerRef = useRef(null);
-  let model, webcam, labelContainer, maxPredictions;
+  let model, webcam, maxPredictions;
 
   useEffect(() => {
     const init = async () => {
-      const modelURL = URL + "model.json";
-      const metadataURL = URL + "metadata.json";
+      try {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
 
-      model = await tmImage.load(modelURL, metadataURL);
-      maxPredictions = model.getTotalClasses();
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
 
-      const flip = true;
-      webcam = new tmImage.Webcam(600, 400, flip);
-      await webcam.setup();
-      await webcam.play();
+        const flip = true;
+        webcam = new tmImage.Webcam(600, 400, flip);
+        await webcam.setup();
+        await webcam.play();
 
-      webcamRef.current.appendChild(webcam.canvas);
-      labelContainer = labelContainerRef.current;
-
-      window.requestAnimationFrame(loop);
+        webcamRef.current.appendChild(webcam.canvas);
+        window.requestAnimationFrame(loop);
+      } catch (error) {
+        console.error("Error initializing webcam or model:", error);
+      }
     };
 
     const loop = async () => {
@@ -42,6 +44,7 @@ const Communication = () => {
 
     const predict = async () => {
       const prediction = await model.predict(webcam.canvas);
+      const labelContainer = labelContainerRef.current;
       if (labelContainer) {
         labelContainer.innerHTML = ""; // Clear previous predictions
         prediction.forEach((pred) => {
@@ -53,6 +56,7 @@ const Communication = () => {
         });
       }
     };
+
     if (isChecked) {
       init();
     }
@@ -71,10 +75,8 @@ const Communication = () => {
           <div className="w-full px-4 lg:w-7/12 xl:w-8/12">
             <div
               className="wow fadeInUp mb-12 rounded-md bg-primary/[3%] px-8 py-11 dark:bg-dark sm:p-[55px] lg:mb-5 lg:px-8 xl:p-[55px]"
-              data-wow-delay=".15s
-              "
+              data-wow-delay=".15s"
             >
-              {/*  */}
               {!isChecked && (
                 <img
                   src="/images/camera/icon.svg"
@@ -82,12 +84,11 @@ const Communication = () => {
                   className="my-6 w-full py-5"
                 />
               )}
-                {isChecked && (
-                  <div className="py-5 flex justify-center">
-                    <div id="webcam-container" ref={webcamRef}></div>
-                  </div>
-                )}
-              {/*  */}
+              {isChecked && (
+                <div className="py-5 flex justify-center">
+                  <div id="webcam-container" ref={webcamRef}></div>
+                </div>
+              )}
               <label className="inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
@@ -97,7 +98,7 @@ const Communication = () => {
                   onChange={() => setIsChecked(!isChecked)}
                   readOnly
                 />
-                <div className="peer relative  h-6 w-11 rounded-full border-gray-300 bg-grey after:absolute after:start-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800 rtl:peer-checked:after:-translate-x-full"></div>
+                <div className="peer relative h-6 w-11 rounded-full border-gray-300 bg-grey after:absolute after:start-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800 rtl:peer-checked:after:-translate-x-full"></div>
                 <span className="text-gray-900 ms-3 text-sm font-medium dark:text-gray-300">
                   Mở camera
                 </span>
